@@ -20,6 +20,25 @@ public:
 
         pythonCode << varName << " = pd.read_csv(" << fileName << ")\n";
 
+        if (ctx->KEEP()) {
+            pythonCode << varName << " = " << varName << "[[" << getColumnList(ctx->columnList()) << "]]\n";
+        } else if (ctx->WITHOUT()) {
+            pythonCode << varName << " = " << varName << ".drop(columns=[" << getColumnList(ctx->columnList()) << "])\n";
+        }
+
         return visitChildren(ctx);
+    }
+
+private:
+    std::string getColumnList(MLScriptParser::ColumnListContext *ctx) {
+        std::string list;
+        auto strings = ctx->STRING();
+
+        for (size_t i = 0; i < strings.size(); ++i) {
+            list += strings[i]->getText();
+            if (i < strings.size() - 1) list += ", ";
+        }
+        
+        return list;
     }
 };

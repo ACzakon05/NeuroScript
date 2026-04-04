@@ -11,7 +11,12 @@ prog: stat+ EOF ;
 stat: loadStat ;
 
 // Command definitions
-loadStat: LOAD STRING INTO IDENTIFIER;
+loadStat: LOAD STRING INTO IDENTIFIER (
+    (KEEP columnList) |
+    (WITHOUT columnList)
+)? ;
+
+columnList: STRING (COMMA STRING)* ;
 
 // ==========
 // Lexer
@@ -20,6 +25,9 @@ loadStat: LOAD STRING INTO IDENTIFIER;
 // Keywords
 LOAD: 'LOAD' ;
 INTO: 'INTO' ;
+KEEP: 'KEEP' ;
+WITHOUT: 'WITHOUT' ;
+COMMA: ',' ;
 
 // Primitives
 STRING: '"' ~'"'* '"' ;
